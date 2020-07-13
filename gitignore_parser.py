@@ -10,14 +10,16 @@ def parse_gitignore(full_path, base_dir=None):
 		base_dir = dirname(full_path)
 	rules = []
 	with open(full_path) as ignore_file:
-		counter = 0
-		for line in ignore_file:
-			counter += 1
+		line = ignore_file.readline()
+		counter = 1
+		while line:
 			line = line.rstrip('\n')
 			rule = rule_from_pattern(line, abspath(base_dir),
 									 source=(full_path, counter))
 			if rule:
 				rules.append(rule)
+			line = ignore_file.readline()
+			counter += 1
 	return lambda file_path: any(r.match(file_path) for r in rules)
 
 def rule_from_pattern(pattern, base_path=None, source=None):
